@@ -8,7 +8,7 @@ Event OnUpdate()
 	Actor maleact = male.GetActorRef()
 	Actor femaleact = female.GetActorRef()
 	
-	if (maleact && femaleact)
+	if (!PlayerActor.IsInCombat() && maleact && femaleact)
 		debug.notification("EnemyNightLife actors detected")
 		
 		if (self._fillAlias(maleact) && self._fillAlias(femaleact))
@@ -30,6 +30,9 @@ bool Function _fillAlias(Actor act)
 		i -= 1
 		if (Enemies[i].ForceRefIfEmpty(act))
 			return true
+		elseif (!Enemies[i].GetActorRef().HasKeywordString("SexLabActive"))
+			Enemies[i].ForceRefTo(act)
+			return true
 		endif
 	endwhile
 	
@@ -38,9 +41,9 @@ EndFunction
 
 SexLabFramework Property SexLab  Auto  
 
+Actor Property PlayerActor  Auto  
 ReferenceAlias Property male  Auto  
 ReferenceAlias Property female  Auto  
 
 ReferenceAlias[] Property Enemies  Auto  
 GlobalVariable Property SSLEnemyNightLifePeriod  Auto  
-

@@ -18,11 +18,15 @@ EndFunction
 
 Function Boot()
 	PrimaryQuest.Start()
+	SecondaryQuest.Start()
 EndFunction
 
 Function Shutdown()
 	if (PrimaryQuest.IsRunning())
 		PrimaryQuest.Stop()
+	endif
+	if (SecondaryQuest.IsRunning())
+		SecondaryQuest.Stop()
 	endif
 EndFunction
 
@@ -35,4 +39,6 @@ Function Toggle(bool enabled)
 EndFunction
 
 Quest Property PrimaryQuest  Auto  
+Quest Property SecondaryQuest  Auto  
 Keyword Property LocTypeDungeon  Auto  
+
