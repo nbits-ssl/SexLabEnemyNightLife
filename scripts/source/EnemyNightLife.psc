@@ -1,26 +1,26 @@
 Scriptname EnemyNightLife extends Quest  
 
 Event OnInit()
-	RegisterForSingleUpdate(1.0)
-EndEvent
-
-Event OnUpdate()
+	self.Log("Update")
+	
 	Actor maleact = male.GetActorRef()
 	Actor femaleact = female.GetActorRef()
 	
 	if (!PlayerActor.IsInCombat() && maleact && femaleact)
-		debug.notification("EnemyNightLife actors detected")
+		self.Log("actors detected")
 		
 		if (self._fillAlias(maleact) && self._fillAlias(femaleact))
-			debug.notification("EnemyNightLife StartSex")
+			self.Log("StartSex")
+			femaleact.AddSpell(SSLEnemyNightLifeBlind)
+			maleact.AddSpell(SSLEnemyNightLifeBlind)
+			
 			SexLab.QuickStart(femaleact, maleact)
 		else
-			debug.notification("EnemyNightLife failed _fillAlias()")
+			self.Log("failed _fillAlias()")
 		endif
 	endif
 	
-	float period = SSLEnemyNightLifePeriod.GetValue() as float
-	RegisterForSingleUpdate(period)
+	self.Stop()
 EndEvent
 
 bool Function _fillAlias(Actor act)
@@ -30,13 +30,27 @@ bool Function _fillAlias(Actor act)
 		i -= 1
 		if (Enemies[i].ForceRefIfEmpty(act))
 			return true
-		elseif (!Enemies[i].GetActorRef().HasKeywordString("SexLabActive"))
-			Enemies[i].ForceRefTo(act)
-			return true
+		else
+			Actor enemy = Enemies[i].GetActorRef()
+			if (!enemy.IsInFaction(SSLEnemyNightLifePicked) && \
+				!enemy.HasKeywordString("SexLabActive"))
+				
+				Enemies[i].ForceRefTo(act)
+				return true
+			endif
 		endif
 	endwhile
 	
 	return false
+EndFunction
+
+Function Log(String msg)
+	bool debugLogFlag = true
+	; bool debugLogFlag = false
+
+	if (debugLogFlag)
+		debug.trace("[EnemysNightLife] " + msg)
+	endif
 EndFunction
 
 SexLabFramework Property SexLab  Auto  
@@ -44,6 +58,7 @@ SexLabFramework Property SexLab  Auto
 Actor Property PlayerActor  Auto  
 ReferenceAlias Property male  Auto  
 ReferenceAlias Property female  Auto  
-
 ReferenceAlias[] Property Enemies  Auto  
-GlobalVariable Property SSLEnemyNightLifePeriod  Auto  
+
+Faction Property SSLEnemyNightLifePicked  Auto  
+SPELL Property SSLEnemyNightLifeBlind  Auto  
