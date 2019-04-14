@@ -1,4 +1,4 @@
-﻿SexLab Enemy Night Life
+﻿SexLab Enemy's Night Life
 ====================================================================
 
 敵NPC同士にSexLab Lover's Comfortのような夜の生活をたまにさせるModです。
